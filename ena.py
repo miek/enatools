@@ -24,7 +24,11 @@ class ENA():
     def set_frequency(self, frequency, port=1):
         self.write(f"SENS{port}:FREQ:CW {frequency:e}")
 
+    def set_power(self, power, port=1):
+        self.write(f"SOUR{port}:POW:CENT {power}")
+
 if __name__ == "__main__":
     dev = ENA()
     print(dev.idn())
     dev.set_frequency(50e6)
+    dev.set_power(0)
