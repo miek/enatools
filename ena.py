@@ -21,8 +21,8 @@ class ENA():
     def idn(self):
         return self.query("*IDN?").split(',')
 
-    def set_frequency(self, frequency):
-        self.write(f"SENS1:FREQ:CW {frequency:e}")
+    def set_frequency(self, frequency, port=1):
+        self.write(f"SENS{port}:FREQ:CW {frequency:e}")
 
 if __name__ == "__main__":
     dev = ENA()
