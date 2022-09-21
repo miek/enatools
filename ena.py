@@ -1,7 +1,7 @@
 import socket
 
 class ENA():
-    def __init__(self, address='10.64.10.135', port=5025):
+    def __init__(self, address='e5062a.lan', port=5025):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((address, port))
         self.f = self.socket.makefile('rwb')
