@@ -33,7 +33,7 @@ pm = PowerMeter()
 def test_freq(f, port):
     ena.set_frequency(f, port)
     pm.set_frequency(f)
-    time.sleep(0.1)
+    time.sleep(0.3)
     return pm.measure_power(expected_power=0, resolution=0.001)
 
 print(f"Level Accuracy Test (@ Port {port})")
