@@ -1,0 +1,47 @@
+#!/usr/bin/env python
+
+import ena
+import numpy as np
+import os
+from skrf import Frequency, Network
+import sys
+
+if len(sys.argv) < 2:
+    print(f"Usage: {sys.argv[0]} <filename>")
+    sys.exit(1)
+
+filename = sys.argv[1]
+
+e = ena.ENA()
+freq = Frequency.from_f(e.get_freq_data(), unit='hz')
+_, ext = os.path.splitext(filename)
+
+if ext == '.s2p':
+    if e.get_trace_count() != 4:
+        print(f"Error: trace count must be 4 to save s2p.")
+        sys.exit(1)
+
+    measurements = {}
+    for i in range(1, 5):
+        e.set_active_trace(i)
+        par = e.get_trace_measurement(i)
+        measurements[par] = e.get_corrected_data()
+
+    if len(measurements) != 4:
+        print(f"Error: missing measurement, only got {', '.join(measurements.keys())}.")
+        sys.exit(1)
+
+    s = np.zeros((len(freq), 2, 2), dtype=complex)
+    s[:,0,0] = measurements['S11']
+    s[:,0,1] = measurements['S12']
+    s[:,1,0] = measurements['S21']
+    s[:,1,1] = measurements['S22']
+
+    ntwk = Network(frequency=freq, s=s)
+
+else:
+    # Default to saving the active trace to an s1p
+    data = e.get_corrected_data()
+    ntwk = Network(frequency=freq, s=data)
+
+ntwk.write_touchstone(filename)
