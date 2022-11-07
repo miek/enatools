@@ -1,20 +1,24 @@
 #!/usr/bin/env python
 
+import argparse
 import ena
 import numpy as np
 import os
 from skrf import Frequency, Network
 import sys
 
-if len(sys.argv) < 2:
-    print(f"Usage: {sys.argv[0]} <filename>")
-    sys.exit(1)
+parser = argparse.ArgumentParser(
+    prog = 'ena_save_touchstone',
+    description = 'Save touchstone files from ENA-series VNAs',
+)
 
-filename = sys.argv[1]
+parser.add_argument('filename')
+
+args = parser.parse_args()
 
 e = ena.ENA()
 freq = Frequency.from_f(e.get_freq_data(), unit='hz')
-_, ext = os.path.splitext(filename)
+_, ext = os.path.splitext(args.filename)
 
 if ext == '.s2p':
     if e.get_trace_count() != 4:
@@ -44,4 +48,4 @@ else:
     data = e.get_corrected_data()
     ntwk = Network(frequency=freq, s=data)
 
-ntwk.write_touchstone(filename)
+ntwk.write_touchstone(args.filename)
