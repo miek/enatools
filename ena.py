@@ -51,6 +51,18 @@ class ENA():
         c.imag = data[1::2]
         return c
 
+    def get_if_bandwidth(self, channel=1):
+        data = self.query(f"SENS{channel}:BAND?")
+        return float(data)
+
+    def get_port_extension_enabled(self, channel=1):
+        data = self.query(f"SENS{channel}:CORR:EXT?")
+        return bool(int(data))
+
+    def get_port_extension(self, channel=1, port=1):
+        data = self.query(f"SENS{channel}:CORR:EXT:PORT{port}?")
+        return float(data)
+
 
 if __name__ == "__main__":
     dev = ENA()
